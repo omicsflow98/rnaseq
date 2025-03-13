@@ -20,9 +20,9 @@ process rnaseqc {
        
         """
         rnaseqc \
-	${projectDir}/../../reference/${params.species}/${params.refversion}/genome.gtf \
+	${launchDir}/../../reference/${params.species}/${params.refversion}/genome.gtf \
 	${bam} \
-	--bed ${projectDir}/../../reference/${params.species}/${params.refversion}/genome.bed12 \
+	--bed ${launchDir}/../../reference/${params.species}/${params.refversion}/genome.bed12 \
 	--coverage \
 	.
 
