@@ -17,7 +17,7 @@ process bigwig {
 
         """
 	bedGraphToBigWig ${bedgraph} \
-	${projectDir}/../../reference/${params.species}/${params.refversion}/index/samtools/genome.sizes \
+	${launchDir}/../../reference/${params.species}/${params.refversion}/index/samtools/genome.sizes \
 	${name}.bw
         """
 
