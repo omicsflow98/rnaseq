@@ -17,7 +17,7 @@ process featurecounts {
 	featureCounts -p \
 	--countReadPairs \
 	-O \
-	-a ${projectDir}/../../reference/${params.species}/${params.refversion}/genome.gtf \
+	-a ${launchDir}/../../reference/${params.species}/${params.refversion}/genome.gtf \
 	-o temp.tsv \
 	${bam}
 
