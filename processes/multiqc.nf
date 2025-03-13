@@ -21,7 +21,7 @@ process multiqc {
         script:
                
         """
-        multiqc --config multiqc_config.yaml ${launchDir}/output
+        multiqc --config ${projectDir}/multiqc_config.yaml ${launchDir}/output
 
 	zip -r test_multiqc_report_data.zip test_multiqc_report_data
 
