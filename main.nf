@@ -17,7 +17,6 @@ include {stringtie_abund} from './processes/stringtie.nf'
 include {qualimap} from './processes/qualimap.nf'
 include {ballgown} from './processes/ballgown.nf' 
 include {deseq2} from './processes/DGE.nf'
-include {edger} from './processes/DGE.nf'
 include {rnaseqc} from './processes/rnaseqc.nf'
 include {multiqc} from './processes/multiqc.nf'
 
@@ -76,8 +75,6 @@ workflow {
 	featurecounts(bam_files)
 
 	deseq2(featurecounts.out.counts)
-
-//	edger(featurecounts.out.counts)
 
 	multiqc(runfastqc.out.control_1.collect(), rnaseqc.out.control_2.collect(), samtools.out.control_3.collect(), bigwig.out.control_4.collect(), ballgown.out.control_5, qualimap.out.control_6.collect(), deseq2.out.control_7)
 
