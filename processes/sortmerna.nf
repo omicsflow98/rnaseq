@@ -13,7 +13,7 @@ process sortmerna {
 
         """
         sortmerna \
-        --ref /home/moe001/tools/sortmerna/smr_v4.3_default_db.fasta \
+        --ref ${launchDir}/../../reference/rna/smr_v4.3_default_db.fasta \
         --reads ${fastq[0]} \
         --reads ${fastq[2]}
         """
