@@ -18,7 +18,7 @@ process STAR_run1 {
 
         STAR \
         --runMode alignReads \
-        --genomeDir ${projectDir}/../../reference/${params.species}/${params.refversion}/index/STAR_index \
+        --genomeDir ${launchDir}/../../reference/${params.species}/${params.refversion}/index/STAR_index \
         --readFilesCommand gunzip -c \
 	--runThreadN 4 \
 	--outSAMunmapped Within \
@@ -51,9 +51,9 @@ process STAR_genome {
 	--runMode genomeGenerate \
 	--genomeDir . \
 	--runThreadN 4 \
-	--genomeFastaFiles ${projectDir}/../../reference/${params.species}/${params.refversion}/genome.fa \
+	--genomeFastaFiles ${launchDir}/../../reference/${params.species}/${params.refversion}/genome.fa \
 	--sjdbFileChrStartEnd ${tabfiles} \
-	--sjdbGTFfile ${projectDir}/../../reference/${params.species}/${params.refversion}/genome.gff3 \
+	--sjdbGTFfile ${launchDir}/../../reference/${params.species}/${params.refversion}/genome.gff3 \
 	--sjdbGTFtagExonParentTranscript Parent \
 	--sjdbOverhang 99 \
 	--genomeSAindexNbases 13
