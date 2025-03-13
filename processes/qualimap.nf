@@ -22,7 +22,7 @@ process qualimap {
 
         qualimap rnaseq \
 	-bam ${name}.sortedbyname.bam \
-	-gtf ${projectDir}/../../reference/${params.species}/${params.refversion}/genome.gtf \
+	-gtf ${launchDir}/../../reference/${params.species}/${params.refversion}/genome.gtf \
 	-pe \
 	-sorted \
 	-outdir qualimap \
