@@ -14,7 +14,7 @@ process stringtie {
        
         """
         stringtie \
-	-G ${projectDir}/../../reference/${params.species}/${params.refversion}/genome.gff3 \
+	-G ${launchDir}/../../reference/${params.species}/${params.refversion}/genome.gff3 \
 	-o ${name}.gtf \
 	${bam}
 
@@ -39,11 +39,11 @@ process stringtie_merge {
 	"""
 	stringtie \
         --merge ${stringtie} \
-	-G ${projectDir}/../../reference/${params.species}/${params.refversion}/genome.gff3 \
+	-G ${launchDir}/../../reference/${params.species}/${params.refversion}/genome.gff3 \
 	-o stringtie_merged.gtf
 
 	gffcompare \
-	-r ${projectDir}/../../reference/${params.species}/${params.refversion}/genome.gff3 \
+	-r ${launchDir}/../../reference/${params.species}/${params.refversion}/genome.gff3 \
 	-R \
 	-o merged \
 	stringtie_merged.gtf
