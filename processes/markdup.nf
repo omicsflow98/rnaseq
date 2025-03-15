@@ -19,11 +19,13 @@ process markduplicates {
 	--REMOVE_DUPLICATES false \
 	--VALIDATION_STRINGENCY SILENT \
 	--INPUT ${bam} \
+	--TMP_DIR \$TMPDIR \
 	--METRICS_FILE ${name}.markdup.txt \
 	--OUTPUT ${name}.markdup.bam
 
 	gatk CollectBaseDistributionByCycle \
 	-CHART ${name}.pdf \
+	--TMP_DIR \$TMPDIR \
 	-I ${name}.markdup.bam \
 	-O ${name}.txt
 
