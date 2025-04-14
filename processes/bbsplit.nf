@@ -18,7 +18,7 @@ process bbsplit {
 
         """
 	bbsplit.sh \
-        ref=/home/moe001/tools/sortmerna/smr_v4.3_default_db.fasta \
+        ref=${launchDir}/../../reference/rna/smr_v4.3_default_db.fasta \
         in1=${fastq[0]} \
         in2=${fastq[1]} \
         basename=%_junk.fastq.gz \
