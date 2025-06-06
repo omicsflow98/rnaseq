@@ -1,7 +1,8 @@
 #!/usr/bin/env nextflow
 
 include {runfastqc} from './processes/fastqc.nf'
-include {trimmomatic} from './processes/trimmomatic.nf'
+include {trim_galore} from './processes/trim_galore.nf'
+include { sortmerna } from './processes/sortmerna.nf'
 include {bbsplit} from './processes/bbsplit.nf'
 include {STAR_run1} from './processes/star.nf'
 include {STAR_run2} from './processes/star.nf'
@@ -22,23 +23,34 @@ include {multiqc} from './processes/multiqc.nf'
 
 workflow {
 
-        reads_ch = Channel.fromFilePairs(params.reads, checkIfExists: true)
+	star_index =  "${params.reference}/index/STAR_index"
 
-	runfastqc(reads_ch)
+    first_ch = Channel.fromPath(params.data_csv, checkIfExists: true)
+		| splitCsv(header: true, sep: '\t')
+		| map { row -> tuple(row.SampName,
+				file(row.File1),
+				file(row.File2),
+				row.Adapter1,
+				row.Adapter2,
+				row.LibName,
+				row.Barcode,
+				row.Platform) }
 
-	trimmomatic(reads_ch)
+	runfastqc(first_ch)
 
-	bbsplit(trimmomatic.out.trimmed_fastq)
+	trim_galore(first_ch)
 
-	STAR_run1(bbsplit.out.no_rrna)
+	bbsplit(params.rrna_index, params.rrna, trim_galore.out.readgroup, trim_galore.out.trimmed_fastq)
+
+	STAR_run1(star_index, bbsplit.out.readgroup, bbsplit.out.no_rrna)
 
 	STAR_run1.out.tab_files
 	| collect
 	| set { tab_files }
 
-	STAR_genome(tab_files)
+	STAR_genome(params.reference, tab_files)
 
-	STAR_run2(bbsplit.out.no_rrna, STAR_genome.out.control)
+	STAR_run2(bbsplit.out.readgroup, bbsplit.out.no_rrna, STAR_genome.out.control)
 
 	markduplicates(STAR_run2.out.gene_aligned)
 

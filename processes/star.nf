@@ -3,28 +3,28 @@ process STAR_run1 {
 	label 'STAR'
 
         publishDir "${params.outdir}/output/STAR/firstpass"
+		container "${params.apptainer}/star.sif"
 
         input:
+		path star_index
+		tuple val(SampName), val(LibName), val(Barcode), val(Platform)
         path fastq
 
         output:
         path("*.out.tab"), emit: tab_files
 
         script:
-        def namepair = fastq[0].toString().replaceAll(/_R1_P_norrna.fastq.gz/, "")
 
         """
-	read LibName Barcode Platform <<< \$(awk -v n="${namepair}" '\$1 == n {print \$2, \$3, \$4}' ${launchDir}/info.tsv)
-
         STAR \
         --runMode alignReads \
-        --genomeDir ${launchDir}/../../reference/${params.species}/${params.refversion}/index/STAR_index \
+        --genomeDir ${star_index} \
         --readFilesCommand gunzip -c \
-	--runThreadN 4 \
-	--outSAMunmapped Within \
+		--runThreadN 4 \
+		--outSAMunmapped Within \
         --outSAMtype BAM Unsorted \
-        --outFileNamePrefix ${namepair}_ \
-        --outSAMattrRGline ID:${namepair}      PL:\$Platform   PU:\$Barcode    LB:\$LibName    SM:${namepair} \
+        --outFileNamePrefix ${SampName}_ \
+        --outSAMattrRGline ID:${SampName}      PL:${Platform}   PU:${Barcode}    LB:${LibName}    SM:${SampName} \
         --readFilesIn ${fastq[0]} ${fastq[1]}
 
         """
@@ -35,8 +35,10 @@ process STAR_genome {
 	label 'STAR_REF'
 
 	publishDir "${params.outdir}/output/STAR/newref"
+	container "${params.apptainer}/star.sif"
 
 	input:
+	path reference_dir
 	path tabfiles
 
 	output:
@@ -51,9 +53,9 @@ process STAR_genome {
 	--runMode genomeGenerate \
 	--genomeDir . \
 	--runThreadN 4 \
-	--genomeFastaFiles ${launchDir}/../../reference/${params.species}/${params.refversion}/genome.fa \
+	--genomeFastaFiles ${reference_dir}/genome.fa \
 	--sjdbFileChrStartEnd ${tabfiles} \
-	--sjdbGTFfile ${launchDir}/../../reference/${params.species}/${params.refversion}/genome.gff3 \
+	--sjdbGTFfile ${reference_dir}/genome.gff3 \
 	--sjdbGTFtagExonParentTranscript Parent \
 	--sjdbOverhang 99 \
 	--genomeSAindexNbases 13
@@ -64,35 +66,34 @@ process STAR_genome {
 
 process STAR_run2 {
 
-        label 'STAR'
+    label 'STAR'
 
-        publishDir "${params.outdir}/output/STAR/aligned", mode: 'copy'
+    publishDir "${params.outdir}/output/STAR/aligned", mode: 'copy'
+	container "${params.apptainer}/star.sif"
 
-        input:
-        path fastq
+    input:
+	tuple val(SampName), val(LibName), val(Barcode), val(Platform)
+    path fastq
 	val ready
 
-        output:
-        tuple val(namepair), path("*.sortedByCoord.out.bam"), emit: gene_aligned
+    output:
+    tuple val(SampName), path("*.sortedByCoord.out.bam"), emit: gene_aligned
 	path("*.sortedByCoord.out.bam"), emit: bam
 	path("*.out")
 
-        script:
-        namepair = fastq[0].toString().replaceAll(/_R1_P_norrna.fastq.gz/, "")
+    script:
 	
-        """
-	read LibName Barcode Platform <<< \$(awk -v n="${namepair}" '\$1 == n {print \$2, \$3, \$4}' ${launchDir}/info.tsv)
-
-        STAR \
+    """
+    STAR \
 	--runMode alignReads \
 	--genomeDir ${params.outdir}/output/STAR/newref \
-        --runThreadN 4 \
+    --runThreadN 4 \
 	--readFilesCommand gunzip -c \
 	--outSAMunmapped Within \
-        --outSAMtype BAM SortedByCoordinate \
-        --outFileNamePrefix ${namepair}_ \
-	--outSAMattrRGline ID:${namepair}	PL:\$Platform	PU:\$Barcode	LB:\$LibName	SM:${namepair} \
-        --readFilesIn ${fastq[0]} ${fastq[1]}
+    --outSAMtype BAM SortedByCoordinate \
+    --outFileNamePrefix ${SampName}_ \
+	--outSAMattrRGline ID:${SampName}	PL:${Platform}	PU:${Barcode}	LB:${LibName}	SM:${SampName} \
+    --readFilesIn ${fastq[0]} ${fastq[1]}
 
-        """
+    """
 }
