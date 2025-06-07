@@ -3,12 +3,13 @@ process bedtools {
         label 'bedtools'
 
 	publishDir "${params.outdir}/output/bigwig"
+        container "${params.apptainer}/bedtools.sif"
 
         input:
         tuple val(name), path(bam)
 
         output:
-        path("*.sort.bedgraph"), emit: bedtools
+        tuple val(name), path("*.sort.bedgraph"), emit: bedtools
         
         script:
         

@@ -22,6 +22,7 @@ process bbsplit {
         ref=${rrna} \
         in1=${fastq[0]} \
         in2=${fastq[1]} \
+        threads=10 \
         basename=%_junk.fastq.gz \
         outu1=${SampName}_norrna.fastq.gz \
         outu2=${SampName}_norrna.fastq.gz

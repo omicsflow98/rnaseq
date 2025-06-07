@@ -1,22 +1,23 @@
 process samtools {
 
-        label 'samtools'
+    label 'samtools'
 
-        publishDir "${params.outdir}/output/markdup"
+    publishDir "${params.outdir}/output/markdup"
+	container "${params.apptainer}/bwa.sif"
 
-        input:
+    input:
 	tuple val(names), path(bam)
 
-        output:
-        path("*.csi"), emit: index
+    output:
+    path("*.csi"), emit: index
 	path("*.bai")
 	path("*.idx"), emit: stats
 	val("process_complete"), emit: control_3
 
-        script:
+    script:
 
-        """
-        samtools index \
+    """
+    samtools index \
 	-c \
 	-o ${bam}.csi \
 	${bam}
@@ -28,5 +29,5 @@ process samtools {
 
 	samtools idxstats ${bam} > ${bam}.idx 
 
-        """
+    """
 }

@@ -1,24 +1,27 @@
 process stringtie {
 
-        label 'stringtie'
+    label 'stringtie'
 
-        input:
-        tuple val(name), path(bam)
+	container "${params.apptainer}/stringtie.sif"
 
-        output:
-        path("*.gtf"), emit: diffexp
+    input:
+	path reference_dir
+    tuple val(name), path(bam)
+
+    output:
+    path("*.gtf"), emit: diffexp
 
 	publishDir "${params.outdir}/output/stringtie/${name}"
 
-        script:
+    script:
        
-        """
-        stringtie \
-	-G ${launchDir}/../../reference/${params.species}/${params.refversion}/genome.gff3 \
+    """
+    stringtie \
+	-G ${reference_dir}/genome.gff3 \
 	-o ${name}.gtf \
 	${bam}
 
-        """
+    """
 }
 
 process stringtie_merge {
@@ -26,8 +29,10 @@ process stringtie_merge {
 	label 'stringtie'
 
 	publishDir "${params.outdir}/output/stringtie"
+	container "${params.apptainer}/stringtie.sif"
 
 	input:
+	path reference_dir
 	path stringtie
 
 	output:
@@ -38,12 +43,12 @@ process stringtie_merge {
 
 	"""
 	stringtie \
-        --merge ${stringtie} \
-	-G ${launchDir}/../../reference/${params.species}/${params.refversion}/genome.gff3 \
+    --merge ${stringtie} \
+	-G ${reference_dir}/genome.gff3 \
 	-o stringtie_merged.gtf
 
 	gffcompare \
-	-r ${launchDir}/../../reference/${params.species}/${params.refversion}/genome.gff3 \
+	-r ${reference_dir}/genome.gff3 \
 	-R \
 	-o merged \
 	stringtie_merged.gtf
@@ -56,9 +61,11 @@ process stringtie_abund {
 
 	label 'stringtie'
 
-        input:
+	container "${params.apptainer}/stringtie.sif"
+
+    input:
 	path mergedgtf
-        tuple val(name), path(bam)
+    tuple val(name), path(bam)
 
 	output:
 	path("*.tsv"), emit: expression
@@ -74,11 +81,11 @@ process stringtie_abund {
 
 	"""
 	stringtie \
-        -e -B \
+    -e -B \
 	-G ${mergedgtf} \
 	-A expression.tsv \
 	-o ${name}.gtf \
-        ${bam}
+    ${bam}
 
 	"""
 }

@@ -1,33 +1,36 @@
 process markduplicates {
 
-        label 'markdup'
+    label 'markdup'
+	container "${params.apptainer}/gatk.sif"
 
-        publishDir "${params.outdir}/output/markdup"
+    publishDir "${params.outdir}/output/markdup"
 
-        input:
-        tuple val(name), path(bam)
+    input:
+	path temp_dir
+    tuple val(name), path(bam)
 
-        output:
-        tuple val(name), path("*.markdup.bam"), emit: mark_dup
+    output:
+    tuple val(name), path("*.markdup.bam"), emit: mark_dup
 	path("*.txt"), emit: metrics
 
-        script:
+    script:
        
 	"""
+	gatk MarkDuplicatesSpark \
+	--remove-all-duplicates false \
+	--read-validation-stringency SILENT \
+	--input ${bam} \
+	--tmp-dir ${temp_dir} \
+	--spark-master local[*] \
+	--metrics-file ${name}.markdup.txt \
+	--output ${name}.markdup.bam
 
-	gatk MarkDuplicates \
-	--REMOVE_DUPLICATES false \
-	--VALIDATION_STRINGENCY SILENT \
-	--INPUT ${bam} \
-	--TMP_DIR \$TMPDIR \
-	--METRICS_FILE ${name}.markdup.txt \
-	--OUTPUT ${name}.markdup.bam
+	gatk CollectBaseDistributionByCycleSpark \
+	--chart ${name}.pdf \
+	--tmp-dir ${temp_dir} \
+	--spark-master local[*] \
+	--input ${name}.markdup.bam \
+	--output ${name}.txt
 
-	gatk CollectBaseDistributionByCycle \
-	-CHART ${name}.pdf \
-	--TMP_DIR \$TMPDIR \
-	-I ${name}.markdup.bam \
-	-O ${name}.txt
-
-        """
+    """
 }

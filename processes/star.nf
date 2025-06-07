@@ -32,7 +32,7 @@ process STAR_run1 {
 
 process STAR_genome {
 
-	label 'STAR_REF'
+	label 'STAR'
 
 	publishDir "${params.outdir}/output/STAR/newref"
 	container "${params.apptainer}/star.sif"

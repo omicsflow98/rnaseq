@@ -3,9 +3,11 @@ process bigwig {
         label 'bigwig'
 
         publishDir "${params.outdir}/output/bigwig"
+        container "${params.apptainer}/bigwig.sif"
 
         input:
-        path bedgraph
+        path reference_dir
+        tuple val(name), path(bedgraph)
 
         output:
         path("*.bw"), emit: bigwig
@@ -13,11 +15,9 @@ process bigwig {
 	
 	script:
 
-	def name = bedgraph.toString().replaceAll(/.sort.bedgraph/, "")	
-
         """
 	bedGraphToBigWig ${bedgraph} \
-	${launchDir}/../../reference/${params.species}/${params.refversion}/index/samtools/genome.sizes \
+	${reference_dir}/index/samtools/genome.sizes \
 	${name}.bw
         """
 

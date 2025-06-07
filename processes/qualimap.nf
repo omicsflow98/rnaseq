@@ -1,32 +1,34 @@
 process qualimap {
 
-        label 'qualimap'
+    label 'qualimap'
 
-        publishDir "${params.outdir}/output/QC"
+    publishDir "${params.outdir}/output/QC"
+	container "${params.apptainer}/qualimap.sif"
 
-        input:
-        tuple val(name), path(bam)
+    input:
+	path reference_dir
+    tuple val(name), path(bam)
 
 	output:
 	path("qualimap/*.pdf")
 	val("process_complete"), emit: control_6
 
-        script:
+    script:
         
-        """
+    """
 
 	samtools sort \
 	-n \
 	-o ${name}.sortedbyname.bam \
 	${bam}
 
-        qualimap rnaseq \
+    qualimap rnaseq \
 	-bam ${name}.sortedbyname.bam \
-	-gtf ${launchDir}/../../reference/${params.species}/${params.refversion}/genome.gtf \
+	-gtf ${reference_dir}/genome.gtf \
 	-pe \
 	-sorted \
 	-outdir qualimap \
 	-outfile ${name}
 
-        """
+    """
 }

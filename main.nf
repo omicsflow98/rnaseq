@@ -23,8 +23,6 @@ include {multiqc} from './processes/multiqc.nf'
 
 workflow {
 
-	star_index =  "${params.reference}/index/STAR_index"
-
     first_ch = Channel.fromPath(params.data_csv, checkIfExists: true)
 		| splitCsv(header: true, sep: '\t')
 		| map { row -> tuple(row.SampName,
@@ -40,9 +38,9 @@ workflow {
 
 	trim_galore(first_ch)
 
-	bbsplit(params.rrna_index, params.rrna, trim_galore.out.readgroup, trim_galore.out.trimmed_fastq)
+	bbsplit(params.rrna, trim_galore.out.readgroup, trim_galore.out.trimmed_fastq)
 
-	STAR_run1(star_index, bbsplit.out.readgroup, bbsplit.out.no_rrna)
+	STAR_run1(params.star_index, bbsplit.out.readgroup, bbsplit.out.no_rrna)
 
 	STAR_run1.out.tab_files
 	| collect
@@ -52,23 +50,23 @@ workflow {
 
 	STAR_run2(bbsplit.out.readgroup, bbsplit.out.no_rrna, STAR_genome.out.control)
 
-	markduplicates(STAR_run2.out.gene_aligned)
+	markduplicates(params.temp_dir, STAR_run2.out.gene_aligned)
 
-	rnaseqc(STAR_run2.out.gene_aligned)
+	rnaseqc(params.reference, STAR_run2.out.gene_aligned)
 
 	samtools(STAR_run2.out.gene_aligned)
 
 	bedtools(STAR_run2.out.gene_aligned)
 
-	bigwig(bedtools.out.bedtools)
+	bigwig(params.reference, bedtools.out.bedtools)
 
-	stringtie(STAR_run2.out.gene_aligned)
+	stringtie(params.reference, STAR_run2.out.gene_aligned)
 	
 	stringtie.out.diffexp
 	| collect
 	| set { gtf_files }
 
-	stringtie_merge(gtf_files)
+	stringtie_merge(params.reference, gtf_files)
 
 	stringtie_abund(stringtie_merge.out.annotation, STAR_run2.out.gene_aligned)
 
@@ -76,7 +74,7 @@ workflow {
 	| collect
 	| set { namesave }
 
-	qualimap(STAR_run2.out.gene_aligned)
+	qualimap(params.reference, STAR_run2.out.gene_aligned)
 
 	ballgown(namesave)
 
