@@ -7,8 +7,7 @@ process bbsplit {
 
         input:
         path rrna
-        tuple val(SampName), val(LibName), val(Barcode), val(Platform)
-        path fastq
+        tuple val(SampName), val(LibName), val(Barcode), val(Platform), path(fastq)
 
         output:
         path("*_norrna.fastq.gz"), emit: no_rrna

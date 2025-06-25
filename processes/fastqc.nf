@@ -10,7 +10,6 @@ process runfastqc {
 
         output:
         path("*.{html,zip}")
-	val("process_complete"), emit: control_1
 
         script:
 
