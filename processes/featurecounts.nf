@@ -6,6 +6,7 @@ process featurecounts {
 	
 	input:
 	path bam
+	val reference
 	
 	output:
 	path("counts.tsv"), emit: counts
@@ -17,7 +18,7 @@ process featurecounts {
 	featureCounts -p \
 	--countReadPairs \
 	-O \
-	-a ${launchDir}/../../reference/${params.species}/${params.refversion}/genome.gtf \
+	-a ${reference}/genome.gtf \
 	-o temp.tsv \
 	${bam}
 
