@@ -46,7 +46,7 @@ workflow diffexp_transcript {
 	| collect
 	| set { bam_files }
 
-	featurecounts(bam_files)
+	featurecounts(bam_files, params.reference)
 
     deseq2(featurecounts.out.counts, params.bg_file)
     

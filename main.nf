@@ -2,13 +2,14 @@
 
 //include {multiqc} from './processes/multiqc.nf'
 
-include { diffexp_gene } from './subworkflows/diffexp.nf'
-include { diffexp_transcript } from './subworkflows/diffexp.nf'
-include { stats } from './subworkflows/stats.nf'
+include { diffexp_gene } from './subworkflows/diffexp/diffexp.nf'
+include { diffexp_transcript } from './subworkflows/diffexp/diffexp.nf'
+include { stats } from './subworkflows/stats/stats.nf'
 include { make_bam } from './subworkflows/make_bam.nf'
 workflow {
 
 	make_bam(params.bam_present, params.data_csv)
+
 	(gene_bam, transcript_bam) = make_bam.out
 
 	diffexp_gene(gene_bam)
