@@ -3,6 +3,7 @@ process featurecounts {
 	label 'featurecounts'
 	
 	publishDir "${params.outdir}/output/featurecounts"
+	container "${params.apptainer}/featurecounts.sif"
 	
 	input:
 	path bam

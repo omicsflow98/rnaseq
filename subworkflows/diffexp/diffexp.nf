@@ -13,6 +13,8 @@ workflow diffexp_gene {
 
     main:
 
+    sample_paths = "${params.outdir}/output/stringtie/"
+
     stringtie(params.reference, gene_aligned)
 
     stringtie.out.diffexp
@@ -27,7 +29,7 @@ workflow diffexp_gene {
 	| collect
 	| set { namesave }
 
-    ballgown(namesave, params.bg_file)
+    ballgown(namesave, params.bg_file, sample_paths, params.outdir)
 
     emit:
     gene_aligned
@@ -48,6 +50,6 @@ workflow diffexp_transcript {
 
 	featurecounts(bam_files, params.reference)
 
-    deseq2(featurecounts.out.counts, params.bg_file)
+    deseq2(featurecounts.out.counts, params.bg_file, params.outdir)
     
 }

@@ -6,7 +6,7 @@ process STAR_run1 {
 		container "${params.apptainer}/star.sif"
 
         input:
-		path star_index
+		val star_index
 		tuple val(SampName), val(LibName), val(Barcode), val(Platform)
         path fastq
 
@@ -32,7 +32,7 @@ process STAR_run1 {
 
 process STAR_genome {
 
-	label 'STAR'
+	label 'STAR_genome'
 
 	publishDir "${params.outdir}/output/STAR/newref"
 	container "${params.apptainer}/star.sif"

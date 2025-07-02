@@ -23,8 +23,8 @@ process bbsplit {
         in2=${fastq[1]} \
         threads=10 \
         basename=%_junk.fastq.gz \
-        outu1=${SampName}_norrna.fastq.gz \
-        outu2=${SampName}_norrna.fastq.gz
+        outu1=${SampName}_R1_norrna.fastq.gz \
+        outu2=${SampName}_R2_norrna.fastq.gz
 
         """
 
