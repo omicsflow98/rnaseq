@@ -34,7 +34,7 @@ process STAR_genome {
 
 	label 'STAR_genome'
 
-	publishDir "${params.outdir}/output/STAR/newref"
+	publishDir "${params.outdir}/output/STAR/newref", mode: 'copy'
 	container "${params.apptainer}/star.sif"
 
 	input:
@@ -68,13 +68,13 @@ process STAR_run2 {
 
     label 'STAR'
 
-    publishDir "${params.outdir}/output/STAR/aligned", mode: 'copy'
+    publishDir "${params.outdir}/output/STAR/aligned"
 	container "${params.apptainer}/star.sif"
 
     input:
 	tuple val(SampName), val(LibName), val(Barcode), val(Platform)
     path fastq
-	val ready
+	path starindex
 
     output:
     tuple val(SampName), path("*.sortedByCoord.out.bam"), emit: gene_aligned
@@ -86,7 +86,7 @@ process STAR_run2 {
     """
     STAR \
 	--runMode alignReads \
-	--genomeDir ${params.outdir}/output/STAR/newref \
+	--genomeDir . \
     --runThreadN 4 \
 	--readFilesCommand gunzip -c \
 	--outSAMunmapped Within \

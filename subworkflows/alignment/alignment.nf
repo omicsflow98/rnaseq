@@ -48,7 +48,7 @@ STAR_run1.out.tab_files
 
 STAR_genome(params.reference, tab_files)
 
-STAR_run2(bbsplit.out.readgroup, bbsplit.out.no_rrna, STAR_genome.out.control)
+STAR_run2(bbsplit.out.readgroup, bbsplit.out.no_rrna, STAR_genome.out.starindex)
 gene_bam = STAR_run2.out.gene_aligned
 transcript_bam = STAR_run2.out.bam
 
