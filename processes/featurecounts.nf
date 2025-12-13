@@ -6,6 +6,7 @@ process featurecounts {
 	container "${params.apptainer}/featurecounts.sif"
 	
 	input:
+	path index
 	path bam
 	val reference
 	
@@ -19,7 +20,7 @@ process featurecounts {
 	featureCounts -p \
 	--countReadPairs \
 	-O \
-	-a ${reference}/genome.gtf \
+	-a ${index} \
 	-o temp.tsv \
 	${bam}
 

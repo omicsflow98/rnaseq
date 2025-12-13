@@ -6,11 +6,14 @@ include { diffexp_gene } from './subworkflows/diffexp/diffexp.nf'
 include { diffexp_transcript } from './subworkflows/diffexp/diffexp.nf'
 include { stats } from './subworkflows/stats/stats.nf'
 include { make_bam } from './subworkflows/make_bam.nf'
+include { variant_calling } from './subworkflows/variant_calling/variant_calling.nf'
 workflow {
 
 	make_bam(params.bam_present, params.data_csv)
 
 	(gene_bam, transcript_bam) = make_bam.out
+
+	variant_calling(gene_bam)
 
 	diffexp_gene(gene_bam)
 

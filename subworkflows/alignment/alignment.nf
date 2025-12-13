@@ -40,7 +40,9 @@ if (params.trim) {
 
 bbsplit(params.rrna, trimmed_reads)
 
-STAR_run1(params.star_index, bbsplit.out.readgroup, bbsplit.out.no_rrna)
+star_index = file( "${params.reference}/index/STAR_index/*" )
+
+STAR_run1(star_index, bbsplit.out.readgroup, bbsplit.out.no_rrna)
 
 STAR_run1.out.tab_files
 	| collect

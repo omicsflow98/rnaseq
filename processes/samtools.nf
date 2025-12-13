@@ -1,8 +1,7 @@
 process samtools {
 
     label 'samtools'
-
-    publishDir "${params.outdir}/output/markdup"
+	
 	container "${params.apptainer}/bwa.sif"
 
     input:
@@ -10,7 +9,7 @@ process samtools {
 
     output:
     path("*.csi"), emit: index
-	path("*.bai")
+	tuple val(names), path("*.bai"), path(bam), emit: bai_index
 	path("*.idx"), emit: stats
 	val("process_complete"), emit: control_3
 

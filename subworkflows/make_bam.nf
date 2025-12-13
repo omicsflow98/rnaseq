@@ -19,7 +19,7 @@ workflow make_bam {
 			}
 		transcript_bam = Channel.fromPath(csv_file, checkIfExists: true)
 		| splitCsv(header: true, sep: '\t')
-		| map { row -> row.File2
+		| map { row -> file(row.File1)
 			}
 	}
 

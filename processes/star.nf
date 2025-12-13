@@ -6,7 +6,7 @@ process STAR_run1 {
 		container "${params.apptainer}/star.sif"
 
         input:
-		val star_index
+		path star_index
 		tuple val(SampName), val(LibName), val(Barcode), val(Platform)
         path fastq
 
@@ -18,7 +18,7 @@ process STAR_run1 {
         """
         STAR \
         --runMode alignReads \
-        --genomeDir ${star_index} \
+        --genomeDir . \
         --readFilesCommand gunzip -c \
 		--runThreadN 4 \
 		--outSAMunmapped Within \
@@ -58,6 +58,7 @@ process STAR_genome {
 	--sjdbGTFfile ${reference_dir}/genome.gff3 \
 	--sjdbGTFtagExonParentTranscript Parent \
 	--sjdbOverhang 99 \
+	--limitSjdbInsertNsj 2000000 \
 	--genomeSAindexNbases 13
 
 	"""
